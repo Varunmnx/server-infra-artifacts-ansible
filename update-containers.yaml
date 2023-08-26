@@ -1,0 +1,11 @@
+---
+- name: Run Docker containers with custom names
+  hosts: your_target_hosts
+  become: true  # This enables sudo
+  tasks:
+    - name: Start containers with custom names
+      docker_container:
+        name: your_custom_container_name1
+        image: your_image_name1:tag
+        state: started
+        # Add more parameters as needed
