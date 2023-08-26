@@ -1,11 +1,29 @@
 ---
-- name: Run Docker containers with custom names
+- name: Pull Docker images from private Docker Hub
   hosts: your_target_hosts
   become: true  # This enables sudo
   tasks:
+    - name: Log in to Docker Hub
+      docker_login:
+        username: your_dockerhub_username
+        password: your_dockerhub_password
+        registry_url: https://index.docker.io/v1/
+
+    - name: Pull Docker images
+      docker_image:
+        name: "{{ item.image }}"
+        source: pull
+      loop:
+        - { image: your_private_image_name1:tag }
+        - { image: your_private_image_name2:tag }
+        # Add more images as needed
+
     - name: Start containers with custom names
       docker_container:
-        name: your_custom_container_name1
-        image: your_image_name1:tag
+        name: "{{ item.name }}"
+        image: "{{ item.image }}"
         state: started
-        # Add more parameters as needed
+      loop:
+        - { name: your_custom_container_name1, image: your_private_image_name1:tag }
+        - { name: your_custom_container_name2, image: your_private_image_name2:tag }
+        # Add more containers as needed
