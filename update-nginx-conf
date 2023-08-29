@@ -1,0 +1,23 @@
+---
+- name: Update Nginx Configuration, Link Containers, and Restart Nginx
+  hosts: your_vm_group
+  become: true  # This enables sudo
+
+  tasks:
+    - name: Copy custom Nginx configuration
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: Restart Nginx
+
+    - name: Ensure linked container is running
+      docker_container:
+        name: linked_container
+        image: linked_image:tag  # Replace with the actual image and tag
+        state: started
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
