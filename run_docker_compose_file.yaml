@@ -1,0 +1,21 @@
+---
+- name: Run Docker Compose
+  hosts: your_target_host  # Replace with your target host or group name
+  become: yes  # Use sudo to execute commands as root (if required)
+
+  tasks:
+    - name: Copy Docker Compose file
+      copy:
+        src: /path/to/your/docker-compose.yml  # Replace with the actual path to your Docker Compose file
+        dest: /path/on/target/host/docker-compose.yml  # Replace with the desired path on the target host
+      register: copy_result
+
+    - name: Check if the file was copied successfully
+      assert:
+        that:
+          - copy_result is success
+        fail_msg: "Failed to copy Docker Compose file."
+      when: copy_result is failed
+
+    - name: Run Docker Compose
+      command: docker-compose -f /path/on/target/host/docker-compose.yml up -d
